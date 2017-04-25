@@ -151,7 +151,7 @@ void APP_Initialize ( void )
     
     // Initialize the Timer
     _CP0_SET_COUNT(0);
-    int timetoWait = 48000000*0.0005/2;
+    
 }
 
 
@@ -187,14 +187,12 @@ void APP_Tasks ( void )
         {
             // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
             // remember the core timer runs at half the CPU speed
-
+            int timetoWait = 48000000*0.0005/2;
             // Wait for 0.0005 s
-            if(_CP0_GET_COUNT()>timetoWait&&PORTBbits.RB4==1)
+            if((_CP0_GET_COUNT()>timetoWait)&&PORTBbits.RB4==1)
             {
                 _CP0_SET_COUNT(0);
                 LATAbits.LATA4 = ~LATAbits.LATA4;
-                ledIsOn = ~ledIsOn;
-
             }
             
             break;
