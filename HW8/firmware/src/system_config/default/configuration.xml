@@ -6,4 +6,8 @@
     <ForceOptimization flag="true"/>
     <MergeStrategy flag="USER_ALL"/>
   </General>
+  <DisplayManager>
+    <SystemInitScript/>
+    <SystemStartScript/>
+  </DisplayManager>
 </configuration>
