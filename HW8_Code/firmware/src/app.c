@@ -870,7 +870,7 @@ void APP_Tasks(void) {
             // Initialize the Timer
             _CP0_SET_COUNT(0);
             int timetoWait = 48000000 * 0.1 / 2;
-
+            
             int timetoWaitL = 48000000 * 0.0005 / 2;
 
             int numberTimer = 0;
@@ -924,7 +924,7 @@ void APP_Tasks(void) {
                 // remember the core timer runs at half the CPU speed
 
                 // Wait for 0.0005 s
-                if (_CP0_GET_COUNT() > timetoWait) {
+                if (_CP0_GET_COUNT() > timetoWait ) {
                     _CP0_SET_COUNT(0);
 
                     unsigned char data[14];
@@ -952,13 +952,11 @@ void APP_Tasks(void) {
                     draw_HLine(65, 65, -100.0 * (float) accelX / 32767.0, 5, colorRED);
                     draw_VLine(65, 65, -100.0 * (float) accelY / 32767.0, 5, colorGREEN);
 
+                    if (PORTBbits.RB8 == 1) {
+                        LATAbits.LATA4 = ~LATAbits.LATA4;
+                        ledIsOn = ~ledIsOn;
+                    }
 
-
-                }
-
-                if ((PORTBbits.RB8 == 1)&&((_CP0_GET_COUNT()%timetoWaitL) == 0)) {
-                    LATAbits.LATA4 = ~LATAbits.LATA4;
-                    ledIsOn = ~ledIsOn;
                 }
 
 
