@@ -117,10 +117,41 @@ void APP_Initialize ( void )
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
 
+    __builtin_disable_interrupts();
+
+    // set the CP0 CONFIG register to indicate that kseg0 is cacheable (0x3)
+    __builtin_mtc0(_CP0_CONFIG, _CP0_CONFIG_SELECT, 0xa4210583);
+
+    // 0 data RAM access wait states
+    BMXCONbits.BMXWSDRM = 0x0;
+
+    // enable multi vector interrupts
+    INTCONbits.MVEC = 0x1;
+
+    // disable JTAG to get pins back
+    DDPCONbits.JTAGEN = 0;
+
+    // do your TRIS and LAT commands here
+
+    __builtin_enable_interrupts();
     
-    /* TODO: Initialize your application's state machine and other
-     * parameters.
-     */
+    // Configure RB4 as input
+    ANSELB = 0;
+    TRISBbits.TRISB4 = 1;
+    
+    // Configure AN4 as output
+    ANSELA = 0;
+    TRISAbits.TRISA4 = 0;
+    
+    // Turn on the LED
+    LATAbits.LATA4 = 1;
+    
+    // Variable for the LED
+    char ledIsOn = 1;
+    
+    // Initialize the Timer
+    _CP0_SET_COUNT(0);
+    int timetoWait = 48000000*0.0005/2;
 }
 
 
@@ -154,7 +185,18 @@ void APP_Tasks ( void )
 
         case APP_STATE_SERVICE_TASKS:
         {
-        
+            // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
+            // remember the core timer runs at half the CPU speed
+
+            // Wait for 0.0005 s
+            if(_CP0_GET_COUNT()>timetoWait&&PORTBbits.RB4==1)
+            {
+                _CP0_SET_COUNT(0);
+                LATAbits.LATA4 = ~LATAbits.LATA4;
+                ledIsOn = ~ledIsOn;
+
+            }
+            
             break;
         }
 
